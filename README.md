@@ -6,7 +6,7 @@ This code is a Proof of Concept.
 This code is a proof of concept and is provided _as is_, with **no support or guarantees**.
 It is to be used at your own discretion, I will not accept any liability for damages as a result of using this code.
 If you don't understand what it does, I would _seriously recommend that you refrain from using it_. 
-By using this code you acknowlesdge having read and agreing with this disclaimer and have accepted all responisbility.
+By using this code you acknowlesdge having read and agreeing with this disclaimer and have accepted all responisbility.
  
  
 **Requirements:**
