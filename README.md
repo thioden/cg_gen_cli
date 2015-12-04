@@ -6,7 +6,7 @@
 
 **To run**
 - Rename creds.ini -> credentials.ini
-- replace the credentials with your own
+- Edit the file and replace the credentials with your own
 
 type:
 ```python gc_gen_cli.py```
