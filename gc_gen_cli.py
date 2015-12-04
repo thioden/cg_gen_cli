@@ -1,4 +1,4 @@
-import requests, random
+import requests, random, sys
 from time import sleep
 from ConfigParser import SafeConfigParser
 
@@ -15,6 +15,19 @@ pwd = creds.get('main', 'pwd')
 # -- end login creds section --
 
 # -- begin functions section --
+def header():
+	print '################################################################################'
+	print '#                   GIFTCARD API COMMAND LINE INTERFACE                        #'
+	print '################################################################################'
+	print '\n'
+	return()
+
+def spinning_cursor():
+    while True:
+        for cursor in '|/-\\':
+            yield cursor
+
+
 def ran_char():
   a_z = list(range(65,91))        # create a list with all values from 65 to 91
   random.shuffle(a_z)             # shuffle the list
@@ -52,25 +65,27 @@ def get_input(question):
     return(value)
 
 def send_to_store(store,payload,apikey,apipwd):
+	# send POST request to the account
 	s = requests.post(store, json=payload,  auth=(apikey,apipwd))
-	if s.status_code != 201:
-		print s.status_code
-	sleep(0.05)
+	if s.status_code != 201:				# if POST failed
+		print s.status_code					# print error code
+	sleep(0.05)								# sleep to prevent filling the bucket
 	return()
 
 def code_list(c_len,nr_codes):
-	i = 1
-	gc_list = []
-	while i <= nr_codes:
-		g_code = code(c_len,i)
-		gc_list.append(g_code)
-		print g_code
-		i += 1
-	return(gc_list)	
+	i = 1									# initialise counter
+	gc_list = []							# initialise list
+	print 'Creating code list'				
+	while i <= nr_codes:					# loop through list
+		g_code = code(c_len,i)				# create code
+		gc_list.append(g_code)				# add code to list
+		i += 1								# increment counter
+	return(gc_list)				
 # -- end functions section --
 
 # -- main --
 # get info from user
+header()
 gc_codes = get_input("How many gift cards would you like to create: ")
 gc_len = get_input("How long should the gift card code be: ")
 gc_value = get_input("What is the gift card $ value: ")
@@ -79,21 +94,28 @@ gc_value = get_input("What is the gift card $ value: ")
 q = 0										# initialise counter
 x = code_list(gc_len,gc_codes)				# create list with codes
 f = open('gc_code_list.txt','w')			# open file in current directory
+print 'File opened'
+print 'Writing codes...'
+spinner = spinning_cursor()
 while q < gc_codes:							# loop through the list of codes 
 	line = str(x[q]) + '\n'					# create string to write to file
 	f.write(line)							# write line to file
 	gc_note = 'Employee giftcard nr:' + str(q+1)  # create note to add to code
-	# create JSON payload
+	# create JSON payload - 
 	gc_data = { 							
 		       "gift_card": { "note": gc_note,      
 	                          "initial_value": gc_value, 
 	                          "code": x[q] 
 	                        } 
 	          }
-	print gc_data
-	send_to_store(account,gc_data,key,pwd)                    
-	q += 1
-print 'Codes created.'	
+	send_to_store(account,gc_data,key,pwd)  # POST to account                  
+	sys.stdout.write(spinner.next())        # show busy indicator
+	sys.stdout.flush()						# show busy indicator
+	sleep(0.1)								# show busy indicator
+	sys.stdout.write('\b')					# show busy indicator
+	q += 1									# increment counter
+print 'Codes created'	
 f.close	
+print 'File closed'
 # -- end main --
 
